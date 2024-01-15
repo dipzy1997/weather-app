@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEATHER APP</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/fontawesome.min.css"/>
+</head>
+<body>
+    <div class="card">
+        <div class="search">
+            <input type="text" placeholder="Enter city name" spellcheck="false" class="searchcity"/>
+            <button class="searchbtn"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+        <div class="error">
+            <p>Invalid city name</p>
+        </div>
+        <div class="weather">
+            <img src="images/sunny-cloud.png" alt="" class="weather-icon"/>   
+            <h1 class="temp">22°C</h1>
+            <h2 class="city">New York</h2>
+            <div class="details">
+                <div class="col">
+                    <img src="images/humidity.png" alt=""/>
+                    <div>
+                        <p class="humidity">50%</p>
+                        <p>Humidity</p>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <img src="images/wind.png" alt=""/>
+                    <div>
+                        <p class="wind">15 Km/hr</p>
+                        <p>Wind speed</p>
+                    </div>
+                </div>
+            </div>     
+        </div>
+    </div>
+
+
+    <script>
+
+        //WE GOT THIS API FROM "OPEN WEATHER MAP.ORG" SITE. FIRSTLY WE CREATE AN ACCOUNT FOR SIGN IN. THEN VERIFY EMAIL ADDRESS. THEN FROM THE NAV BAR CLICK ON API ->SCROLL DOWN -> CURRENT WEATHER DATA -> APP DOC ->SCROLL DOWN ->Built-in API request by city name -> API CALL -> COPY THE FIRST API ->PASTE IT IN GOOGLE URL TO CHECK -> COME TO WEBSITE -> MY ACCOUNT(DIPANWITA) ->MY API KEYS -> COPY THE KEY NUMBER -> PASTE IT IN URL {API KEY} PART -> IN URL WE CAN PUT CITY NAME {CITY NAME} IN THIS PART -> BUT WE HAVE TO WRITE IT WITHOUT {} -> IN THIS URL'S LAST PORTION TYPE &UNITS=METRIC WITHOUT ANY SPACE TO GET THE DATA IN DEGREE CENTIGRADE. -> WE COPY THE URL IN THE SCRIPT TAG OF OUR HTML FILE -> CUT THE API KEY AND PASTE IT IN ANOTHER VARIABLE. ->IN URL PART DELETE THE APIID AND CITY NAME
+
+        const apiKey = "84053cd0365d829a55b7e8de99f48ab3";
+        const apiURL = "https://api.openweathermap.org/data/2.5/weather?&units=metric&q=";
+
+        const searchbox = document.querySelector(".searchcity");
+        const searchbtn = document.querySelector(".searchbtn");
+        const weathericon = document.querySelector(".weather-icon");
+
+       async function checkweather(city){
+        const response = await fetch(apiURL + city + `&appid=${apiKey}`);
+
+        if(response.status == 404){
+            document.querySelector(".error").style.display = "block";
+            document.querySelector(".weather").style.display = "none";
+        }
+        else{
+        var data = await response.json();
+
+        document.querySelector(".city").innerHTML = data.name;
+        document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + " "  + "°C";
+
+        //Math.round() it will help to get the temp value into integer number rather a float number.
+
+        document.querySelector(".humidity").innerHTML = data.main.humidity + " "  + "%";
+        document.querySelector(".wind").innerHTML = data.wind.speed + " " + "Km/hr";
+
+        if(data.weather[0].main === "Clouds"){
+          weathericon.src = "images/cloudy.png";
+        }
+        else if(data.weather[0].main === "Clear"){
+            weathericon.src = "images/sun-cloud.png";
+        } 
+        else if(data.weather[0].main === "Rain"){
+            weathericon.src = "images/rain-thunder.png";
+        }
+        else if(data.weather[0].main === "Drizzle"){
+            weathericon.src = "images/rain.jpg";
+        }
+        else if(data.weather[0].main === "Mist"){
+            weathericon.src = "images/cloudy.png";
+        }
+        else{
+            weathericon.src = "images/sunny-cloud.png";
+        };
+        document.querySelector(".weather").style.display = "block";
+        document.querySelector(".error").style.display = "none";
+        }
+
+       
+        
+        //data.weather[0].main -- this part we also get from console page where it was mentioned it's source.we just fetch it.
+
+        //we get this 'name', 'temp', 'humidity' attribute from the console page.as after pasting the api we get all the info about weather with attribute. so we have to update our weather app according to that api.
+
+        //we do main.temp, main.humidity because temp,humidity data is under main in the console page in API
+
+       }
+
+       searchbtn.addEventListener("click", () =>{
+          checkweather(searchbox.value);
+        })
+        //whenever click on search button, it will callback the checkweather function. but according to what we search in input box, that's why we use searchbox.value.
+      
+    </script>
+</body>
+</html>
